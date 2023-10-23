@@ -23,6 +23,14 @@ class Shape(object):
         elif direction == "right":
             self.x += 4
 
+    @staticmethod
+    def factory(type):
+        if type == "Circle":
+            return Circle(100, 100)
+        if type == "Square":
+            return Square(100, 100)
+        assert 0, "Bad shape requested: " + type
+
 
 class Square(Shape):
 
@@ -48,9 +56,7 @@ class Circle(Shape):
 if __name__ == "__main__":
     window_dimensions = 800, 600
     screen = pygame.display.set_mode(window_dimensions)
-
-    square = Square(100, 100)
-    obj = square
+    obj = Shape.factory("Square")
     player_quits = False
 
     while not player_quits:
