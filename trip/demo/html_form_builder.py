@@ -59,5 +59,57 @@ class HtmlFormBuilder(AbstractFormBuilder):
 
     def add_checkbox(self, checkbox_dict):
         self.constructed_object.field_list.append(
-            ''
+            '<label><input type="checkbox" id="{0}" value="{1}">{ 2}<br>'.format(
+                checkbox_dict["field_id"],
+                checkbox_dict["value"],
+                checkbox_dict["label"]
+            )
         )
+
+    def add_button(self, button_dict):
+        self.constructed_object.field_list.append(
+            '<button type="button">{}</button>'.format(
+                button_dict["text"]
+            )
+        )
+
+class FormDirector(Director):
+
+    def __init__(self):
+        Director.__init__(self)
+
+    def construct(self, field_list):
+        for field in field_list:
+            if field["field_type"] == "text_field":
+                self._builder.add_text_feild(field)
+            elif field["field_type"] == "checkbox":
+                self._builder.add_checkbox(field)
+            elif field["field_type"] == "button":
+                self._builder.add_button(field)
+
+if __name__ == "__mian__":
+    director = FormDirector()
+    html_form_builder = HtmlFormBuilder()
+    director.set_builder(html_form_builder)
+    field_list = [
+        {
+            "type": "text_field",
+            "label": "Best text you have ever written",
+            "name": "best_text"
+        },
+        {
+            "type": "checkbox",
+            "id": "check_it",
+            "value": "1",
+            "label": "Check for one"
+        },
+        {
+            "type": "text_field",
+            "label": "Another Text field",
+            "name": "text_field2"
+        }
+    ]
+    director.construct(field_list)
+    with open("form_file.html", "w") as f:
+        f.write("<html><body>{}</body></html>".format(director.get_constructed_object()
+        ))
